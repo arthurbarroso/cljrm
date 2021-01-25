@@ -2,15 +2,12 @@
   (:require [reitit.ring :as ring]
             [ring.adapter.jetty :as jetty]
             [integrant.core :as ig]
-            [environ.core :refer [env]]))
+            [environ.core :refer [env]]
+            [cljrm.router :as router]))
 
 (defn app
   [env]
-  (ring/ring-handler
-    (ring/router
-      [["/"
-        {:get {:handler (fn [req] {:staus 200
-                                   :body "Hello Reiti"})}}]])))
+  (router/routes env))
 
 (defmethod ig/prep-key :server/jetty
   [_ config]
