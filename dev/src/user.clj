@@ -18,6 +18,6 @@
 (comment
   (go)
   (app {:request-method :get
-        :uri "/v1/jobs"})
+        :uri "/swagger.json"})
   (halt)
   (reset))
