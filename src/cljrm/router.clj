@@ -1,11 +1,12 @@
 (ns cljrm.router
   (:require [reitit.ring :as ring]
             [reitit.dev.pretty :as pretty]
-            [cljrm.jobs.routes :as jobs]
             [reitit.swagger :as swagger]
             [reitit.swagger-ui :as swagger-ui]
             [muuntaja.core :as m]
-            [reitit.ring.middleware.muuntaja :as muuntaja]))
+            [reitit.ring.middleware.muuntaja :as muuntaja]
+            [reitit.ring.coercion :as coercion]
+            [cljrm.user.routes :as user]))
 
 (def swagger-docs
   ["/swagger.json"
@@ -20,14 +21,16 @@
   {:exception pretty/exception
    :data      {:muuntaja   m/instance
                :middleware [swagger/swagger-feature
-                            muuntaja/format-middleware]}})
+                            muuntaja/format-middleware
+                            coercion/coerce-request-middleware
+                            coercion/coerce-response-middleware]}})
 
 (defn routes [env]
   (ring/ring-handler
     (ring/router
       [swagger-docs
        ["/v1"
-        (jobs/routes env)]]
+        (user/routes env)]]
       router-config)
     (ring/routes (swagger-ui/create-swagger-ui-handler
                    {:path "/"}))))

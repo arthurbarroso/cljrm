@@ -1,4 +1,4 @@
 {:server/jetty {:handler #ig/ref :cljrm/app
                 :port 3000}
  :cljrm/app   {:jdbc-url #ig/ref :db/postgres}
- :db/postgres  {:jdbc-url "jdbc-url"}}
+ :db/postgres  {:jdbc-url "jdbc:postgresql://localhost:5432/cljrm?password=postgres&user=postgres"}}
