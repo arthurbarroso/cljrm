@@ -14,7 +14,6 @@
 
 (defn create-user! [db]
   (fn [request]
-    (println "body")
     (rr/created (str base-url "/user/"
                      (:users/id
                        (db/create-user! db
