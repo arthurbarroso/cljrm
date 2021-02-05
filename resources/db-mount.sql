@@ -5,7 +5,7 @@ drop table if exists users;
 CREATE TABLE users(
     id SERIAL PRIMARY KEY,
     email VARCHAR ( 50 ) UNIQUE NOT NULL,
-    password VARCHAR ( 50 ) NOT NULL ,
+    password VARCHAR NOT NULL ,
     created_at TIMESTAMP NOT NULL
 );
 

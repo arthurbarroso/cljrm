@@ -5,7 +5,8 @@
             [cljrm.server]
             [next.jdbc :as jdbc]
             [next.jdbc.sql :as sql]
-            [next.jdbc.result-set :as rs]))
+            [next.jdbc.result-set :as rs]
+            [buddy.hashers :refer [encrypt]]))
 
 (ig-repl/set-prep!
   (fn [] (-> "resources/config.edn" slurp ig/read-string)))
@@ -55,4 +56,27 @@
   (->> (jdbc/execute! db ["SELECT * FROM users"] {:builder-fn rs/as-unqualified-maps})
        (map (fn [user]
               (dissoc user :password))))
+  (sql/find-by-keys db :users {:id 3})
+  (->> (sql/find-by-keys db :users {:id 3} {:return-keys true
+                                            :builder-fn rs/as-unqualified-maps})
+       (map (fn [user]
+              (dissoc user :password :created_at))))
+  (app {:request-method :get
+        :uri "/v1/user/3"})
+
+  (let [user {:email "a"
+              :password "b"}
+        encrypted-pass "c"]
+    (assoc user :password encrypted-pass))
+  (let [request {:body {:email "abdcefgh" :password "b"}}
+        base-url "cic"]
+   (str base-url "/user/" (:users/id  (sql/insert! db :users
+                                          (assoc (-> request :body) :password
+                                                                    (encrypt (-> request :body :password))
+                                                                    :created_at (java.time.LocalDate/now))))))
+  (java.time.LocalDate/now)
+  (app {:request-method :post
+        :uri "/v1/user"
+        :body-params {:email "arthurzinzikabala@hotmail.com"
+                      :password "1234supersafe"}})
   (reset))

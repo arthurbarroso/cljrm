@@ -5,6 +5,7 @@
             [reitit.swagger-ui :as swagger-ui]
             [muuntaja.core :as m]
             [reitit.ring.middleware.muuntaja :as muuntaja]
+            [reitit.coercion.spec :as coercion-spec]
             [reitit.ring.coercion :as coercion]
             [cljrm.user.routes :as user]))
 
@@ -19,7 +20,8 @@
 
 (def router-config
   {:exception pretty/exception
-   :data      {:muuntaja   m/instance
+   :data      {:coercion coercion-spec/coercion
+               :muuntaja   m/instance
                :middleware [swagger/swagger-feature
                             muuntaja/format-middleware
                             coercion/coerce-request-middleware
