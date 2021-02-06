@@ -1,12 +1,14 @@
 (ns cljrm.user.routes
-  (:require [cljrm.user.handler :as handler]))
+  (:require [cljrm.user.handler :as handler]
+            [cljrm.user.utils :refer [wrap-jwt-authentication auth-middleware]]))
 
 (defn routes
   [env]
   (let [db (:jdbc-url env)]
     [["/users"
-      {:get {:handler (handler/find-users db)}
-       :post {:handler (fn [request] {:ok true})}}]
+      {:get {:middleware [wrap-jwt-authentication
+                          auth-middleware]
+             :handler (handler/find-users db)}}]
      ["/user/:user-id"
       {:get {:handler (handler/find-single-user db)
              :parameters {:path {:user-id integer?}}}}]

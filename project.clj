@@ -10,7 +10,8 @@
                  [seancorfield/next.jdbc "1.1.582"]
                  [org.postgresql/postgresql "42.2.14"]
                  [clj-http "3.10.0"]
-                 [buddy/buddy-hashers "1.6.0"]]
+                 [buddy/buddy-hashers "1.6.0"]
+                 [buddy/buddy-auth "2.2.0"]]
   :profiles {:uberjar {:aot :all}
              :dev {:source-paths ["dev/src"]
                    :resource-paths ["dev/resources"]

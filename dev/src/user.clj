@@ -6,7 +6,10 @@
             [next.jdbc :as jdbc]
             [next.jdbc.sql :as sql]
             [next.jdbc.result-set :as rs]
-            [buddy.hashers :refer [encrypt check]]))
+            [buddy.hashers :refer [encrypt check]]
+            [buddy.auth.backends :as backends]
+            [buddy.auth.middleware :refer [wrap-authentication]]
+            [buddy.sign.jwt :as jwt]))
 
 (ig-repl/set-prep!
   (fn [] (-> "resources/config.edn" slurp ig/read-string)))
@@ -23,10 +26,22 @@
   (jdbc/execute-one! db sql {:return-keys true
                          :builder-fn rs/as-unqualified-maps}))
 
+(def jwt-secret "string")
+(def backend (backends/jws {:secret jwt-secret}))
+
+(defn wrap-jwt-authentication [handler]
+  (wrap-authentication handler backend))
+
+(defn create-token [payload]
+  (jwt/sign payload jwt-secret))
+
 (comment
   (go)
   (app {:request-method :get
         :uri "/swagger.json"})
+  (app {:request-method :get
+        :uri "/v1/users"
+        :headers {:authorization (str "Token " (create-token {:name "arthur"}))}})
   (app {:request-method :get
         :uri "/v1/users"})
   (app {:request-method :post
@@ -94,6 +109,10 @@
         :body-params {:email "arthurzinzikabala@hotmail.com"
                       :password "1234supersafe"}})
 
+  (create-token {:name "arthur"})
+  (jwt/unsign (create-token {:name "arthur"}) jwt-secret)
+  (jwt/unsign "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImFydGh1cnppbnppa2FiYWxhQGhvdG1haWwuY29tIn0.toA7MVayuOvUZoGuEo6g5RsF6wpjFD3IPeJVzBbm1t4" jwt-secret)
 
-
+  (str "Token " (create-token {:name "arthur"}))
+  (create-token {:name "arthur"})
   (reset))

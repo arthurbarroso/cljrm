@@ -21,7 +21,10 @@
 
 
 (defn login [db email password]
-  (check password (:password
-                    (first (sql/find-by-keys
-                             db :users {:email email}
-                             {:builder-fn rs/as-unqualified-maps})))))
+  (let [pass-check (check password (:password
+                                     (first (sql/find-by-keys
+                                              db :users {:email email}
+                                              {:builder-fn rs/as-unqualified-maps}))))]
+    (if (true? pass-check)
+      {:email email}
+      false)))

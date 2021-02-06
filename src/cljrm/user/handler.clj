@@ -2,10 +2,12 @@
   (:require [cljrm.user.db :as db]
             [ring.util.response :as rr]
             [buddy.hashers :refer [encrypt check]]
-            [cljrm.responses :refer [base-url]]))
+            [cljrm.responses :refer [base-url]]
+            [cljrm.user.utils :refer [create-token]]))
 
 (defn find-users [db]
   (fn [request]
+    (println (:identity request))
     (rr/response (db/find-all-users db))))
 
 (defn find-single-user [db]
@@ -26,8 +28,16 @@
                  :created_at
                  (java.time.LocalDate/now))))))))
 
+(defn login-2 [db]
+  (fn [request]
+    (rr/response (create-token (db/login db
+                                         (-> request :parameters :body :email)
+                                         (-> request :parameters :body :password))))))
+
 (defn login [db]
   (fn [request]
-    (rr/response (db/login db
-                           (-> request :parameters :body :email)
-                           (-> request :parameters :body :password)))))
+    (let [user (db/login db (-> request :parameters :body :email)
+                         (-> request :parameters :body :password))]
+      (if (false? user)
+        (rr/bad-request "Not authorized")
+        (rr/response (create-token user))))))
