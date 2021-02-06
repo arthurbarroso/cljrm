@@ -14,11 +14,20 @@
 
 (defn create-user! [db]
   (fn [request]
-    (rr/created (str base-url "/user/"
-                     (:users/id
-                       (db/create-user! db
-                                        (assoc
-                                          (-> request :parameters :body) :password
-                                                                         (encrypt (-> request :parameters :body :password))
-                                                                         :created_at
-                                                                         (java.time.LocalDate/now))))))))
+    (rr/created
+      (str base-url "/user/"
+           (:id
+             (db/create-user!
+               db
+               (assoc
+                 (-> request :parameters :body)
+                 :password
+                 (encrypt (-> request :parameters :body :password))
+                 :created_at
+                 (java.time.LocalDate/now))))))))
+
+(defn login [db]
+  (fn [request]
+    (rr/response (db/login db
+                           (-> request :parameters :body :email)
+                           (-> request :parameters :body :password)))))

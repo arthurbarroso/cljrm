@@ -6,7 +6,7 @@
             [next.jdbc :as jdbc]
             [next.jdbc.sql :as sql]
             [next.jdbc.result-set :as rs]
-            [buddy.hashers :refer [encrypt]]))
+            [buddy.hashers :refer [encrypt check]]))
 
 (ig-repl/set-prep!
   (fn [] (-> "resources/config.edn" slurp ig/read-string)))
@@ -77,6 +77,23 @@
   (java.time.LocalDate/now)
   (app {:request-method :post
         :uri "/v1/user"
+        :body-params {:email "arthurzinzikabal3a@hotmail.com"
+                      :password "1234supersafe"}})
+
+  (check "arthur1" (:users/password (jdbc/execute-one! db ["SELECT * FROM users where id = 1"])))
+  (jdbc/execute! db ["SELECT * FROM users"])
+  (check "1234supersafe" (:password (jdbc/execute-one! db ["SELECT * FROM users where email ilike"] {:builder-fn rs/as-unqualified-maps})))
+  (let [password "1234supersafe"]
+    (check password (:password
+                      (first (sql/find-by-keys
+                               db :users {:email "arthurzinzika@hotmail.com"}
+                               {:builder-fn rs/as-unqualified-maps})))))
+
+  (app {:request-method :post
+        :uri "/v1/login"
         :body-params {:email "arthurzinzikabala@hotmail.com"
                       :password "1234supersafe"}})
+
+
+
   (reset))

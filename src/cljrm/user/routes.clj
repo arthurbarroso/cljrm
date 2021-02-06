@@ -13,4 +13,8 @@
      ["/user"
       {:post {:handler (handler/create-user! db)
               :parameters {:body {:email string?
+                                  :password string?}}}}]
+     ["/login"
+      {:post {:handler (handler/login db)
+              :parameters {:body {:email string?
                                   :password string?}}}}]]))

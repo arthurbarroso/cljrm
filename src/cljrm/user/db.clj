@@ -17,4 +17,11 @@
               (dissoc user :password :created_at)))))
 
 (defn create-user! [db user]
-  (sql/insert! db :users user))
+  (sql/insert! db :users user {:builder-fn rs/as-unqualified-maps}))
+
+
+(defn login [db email password]
+  (check password (:password
+                    (first (sql/find-by-keys
+                             db :users {:email email}
+                             {:builder-fn rs/as-unqualified-maps})))))
