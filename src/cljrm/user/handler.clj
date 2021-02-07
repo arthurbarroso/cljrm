@@ -7,7 +7,6 @@
 
 (defn find-users [db]
   (fn [request]
-    (println (:identity request))
     (rr/response (db/find-all-users db))))
 
 (defn find-single-user [db]
@@ -27,12 +26,6 @@
                  (encrypt (-> request :parameters :body :password))
                  :created_at
                  (java.time.LocalDate/now))))))))
-
-(defn login-2 [db]
-  (fn [request]
-    (rr/response (create-token (db/login db
-                                         (-> request :parameters :body :email)
-                                         (-> request :parameters :body :password))))))
 
 (defn login [db]
   (fn [request]

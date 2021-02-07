@@ -7,7 +7,8 @@
             [reitit.ring.middleware.muuntaja :as muuntaja]
             [reitit.coercion.spec :as coercion-spec]
             [reitit.ring.coercion :as coercion]
-            [cljrm.user.routes :as user]))
+            [cljrm.user.routes :as user]
+            [cljrm.note.routes :as note]))
 
 (def swagger-docs
   ["/swagger.json"
@@ -32,7 +33,8 @@
     (ring/router
       [swagger-docs
        ["/v1"
-        (user/routes env)]]
+        (user/routes env)
+        (note/routes env)]]
       router-config)
     (ring/routes (swagger-ui/create-swagger-ui-handler
                    {:path "/"}))))

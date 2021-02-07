@@ -46,6 +46,8 @@
         :uri "/v1/users"})
   (app {:request-method :post
         :uri "/v1/users"})
+  (app {:request-method :get
+        :uri "/v1/user/1"})
   (halt)
   (jdbc/execute! db ["SELECT * FROM users"])
   (dissoc  (jdbc/execute! db ["SELECT * FROM users"]) :password)

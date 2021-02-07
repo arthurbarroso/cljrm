@@ -1,6 +1,6 @@
 (ns cljrm.user.routes
   (:require [cljrm.user.handler :as handler]
-            [cljrm.user.utils :refer [wrap-jwt-authentication auth-middleware]]))
+            [cljrm.middleware :refer [wrap-jwt-authentication auth-middleware]]))
 
 (defn routes
   [env]
